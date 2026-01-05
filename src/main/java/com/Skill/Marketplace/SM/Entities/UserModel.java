@@ -11,8 +11,8 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String FirstName;
-    private String LastName;
+    private String firstName;
+    private String lastName;
     private String password;
 
     @Enumerated(EnumType.STRING)

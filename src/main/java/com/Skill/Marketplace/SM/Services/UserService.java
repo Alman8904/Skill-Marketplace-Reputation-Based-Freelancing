@@ -1,5 +1,5 @@
 package com.Skill.Marketplace.SM.Services;
-import com.Skill.Marketplace.SM.DTO.UpdateUserRequest;
+import com.Skill.Marketplace.SM.DTO.userDTO.UpdateUserDTO;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,15 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    public void createNewUser(UserModel user){
-        userRepo.save(user);
+    public UserModel createNewUser(UserModel user){
+        return userRepo.save(user);
     }
 
-    public void deleteUser(UserModel user){
-        userRepo.delete(user);
+    public void deleteUserById(Long id){
+        userRepo.deleteById(id);
     }
 
-    public UserModel updateUser(Long id , UpdateUserRequest request){
+    public UserModel updateUser(Long id , UpdateUserDTO request){
          UserModel user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
