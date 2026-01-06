@@ -1,10 +1,8 @@
 package com.Skill.Marketplace.SM.Controllers;
-import com.Skill.Marketplace.SM.DTO.categoryDTO.CategoryResponseDTO;
 import com.Skill.Marketplace.SM.DTO.skillDTO.CreateSkillDTO;
 import com.Skill.Marketplace.SM.DTO.skillDTO.SkillResponseDTO;
 import com.Skill.Marketplace.SM.DTO.skillDTO.UpdateSkillDTO;
-import com.Skill.Marketplace.SM.Entities.Category;
-import com.Skill.Marketplace.SM.Entities.Skills;
+import com.Skill.Marketplace.SM.Entities.Skill;
 import com.Skill.Marketplace.SM.Mapper.SkillMapper;
 import com.Skill.Marketplace.SM.Services.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,7 @@ public class SkillController {
 
     @GetMapping
     public ResponseEntity<List<SkillResponseDTO>> getAllSkills(){
-        List<Skills> categories = skillService.getAll();
+        List<Skill> categories = skillService.getAll();
         List<SkillResponseDTO> response = categories.stream()
                 .map(skillMapper::toResponse)
                 .toList();

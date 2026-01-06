@@ -4,8 +4,6 @@ import com.Skill.Marketplace.SM.DTO.userDTO.UpdateUserDTO;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Repo.SkillsRepo;
 import com.Skill.Marketplace.SM.Repo.UserRepo;
-import com.Skill.Marketplace.SM.Repo.UserSkillsRepo;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,9 +16,6 @@ public class UserService {
 
     @Autowired
     private SkillsRepo skillsRepo;
-
-    @Autowired
-    private UserSkillsRepo userSkillsRepo;
 
     public UserModel createNewUser(CreateUserDTO dto){
 
@@ -63,6 +58,4 @@ public class UserService {
         return userRepo.getUserByUsername(username)
                 .orElseThrow(()-> new RuntimeException("User not found"));
     }
-
-
 }

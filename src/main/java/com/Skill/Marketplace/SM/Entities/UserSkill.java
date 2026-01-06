@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class UserSkills {
+public class UserSkill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +19,5 @@ public class UserSkills {
 
     @ManyToOne
     @JoinColumn(name="skill_id")
-    private Skills skills;
+    private Skill skill;
 }

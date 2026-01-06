@@ -13,6 +13,6 @@ public class Category {
     private String categoryName;
 
     @OneToMany(mappedBy = "category")
-    private List<Skills> skills;
+    private List<Skill> skills;
 
 }

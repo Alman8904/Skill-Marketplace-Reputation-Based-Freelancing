@@ -19,6 +19,6 @@ public class UserModel {
     private UserType userType;
 
     @OneToMany(mappedBy = "user")
-    private List<UserSkills> userSkills;
+    private List<UserSkill> userSkills;
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class Skills {
+public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class Skills {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "skills")
-    private List<UserSkills> userSkills;
+    @OneToMany(mappedBy = "skill")
+    private List<UserSkill> userSkills;
 
 }
