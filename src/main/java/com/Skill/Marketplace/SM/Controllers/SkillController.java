@@ -7,6 +7,7 @@ import com.Skill.Marketplace.SM.Entities.Skill;
 import com.Skill.Marketplace.SM.Services.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -17,8 +18,7 @@ public class SkillController {
     @Autowired
     private SkillService skillService;
 
-
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createSkill(@RequestBody CreateSkillDTO dto){
         Skill savedSkill = skillService.create(dto);
@@ -30,18 +30,6 @@ public class SkillController {
                                 savedSkill.getCategory().getCategoryId(),
                                 savedSkill.getCategory().getCategoryName()
                         ) : null
-                )
-        );
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateSkill(@PathVariable Long id , @RequestBody UpdateSkillDTO dto){
-        skillService.update(id, dto);
-        return ResponseEntity.ok(
-                new SkillResponseDTO(
-                        id,
-                        dto.getSkillName(),
-                        null
                 )
         );
     }
@@ -77,6 +65,20 @@ public class SkillController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateSkill(@PathVariable Long id , @RequestBody UpdateSkillDTO dto){
+        skillService.update(id, dto);
+        return ResponseEntity.ok(
+                new SkillResponseDTO(
+                        id,
+                        dto.getSkillName(),
+                        null
+                )
+        );
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSkillById(@PathVariable Long id){
         skillService.delete(id);

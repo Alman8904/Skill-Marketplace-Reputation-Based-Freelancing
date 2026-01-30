@@ -5,8 +5,11 @@ import com.Skill.Marketplace.SM.Services.UserService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 
 
 @Data
@@ -14,15 +17,15 @@ import java.util.List;
 @RequestMapping("/public/user")
 public class UserController {
 
-
-
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createUser (@RequestBody CreateUserDTO request){
-
-        UserModel user = userService.createNewUser(request);
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public ResponseEntity<?> searchUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserModel user = userService.getUserProfile(username);
         return ResponseEntity.ok(
                 new ResponseToUser(
                         user.getId(),
@@ -34,15 +37,12 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id){
-        userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateUserDTO updates){
-        UserModel updatedUser = userService.updateUser(id, updates);
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDTO request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserModel updatedUser = userService.updateUser(username, request);
         return ResponseEntity.ok(
                 new ResponseToUser(
                         updatedUser.getId(),
@@ -54,47 +54,14 @@ public class UserController {
         );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> searchUser(@PathVariable Long id){
-        UserModel user = userService.getUserById(id);
-        return ResponseEntity.ok(
-                new ResponseToUser(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getUserType()
-                )
-        );
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<?> searchUserByUsername(@PathVariable String username){
-        UserModel user = userService.getUserByUsername(username);
-        return ResponseEntity.ok(
-                new ResponseToUser(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getUserType()
-                )
-        );
-    }
 
-    @GetMapping("/admin")
-    public ResponseEntity<?> getAllUsers(){
-        List<UserModel> users = userService.getAllUsers();
-        List<ResponseToUser> response =  users.stream().map(
-                user -> new ResponseToUser(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getUserType()
-                )
-        ).toList();
-
-        return ResponseEntity.ok(response);
-    }
 }

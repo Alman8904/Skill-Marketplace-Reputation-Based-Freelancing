@@ -2,13 +2,11 @@ package com.Skill.Marketplace.SM.Services;
 import com.Skill.Marketplace.SM.DTO.userDTO.CreateUserDTO;
 import com.Skill.Marketplace.SM.DTO.userDTO.UpdateUserDTO;
 import com.Skill.Marketplace.SM.Entities.UserModel;
-import com.Skill.Marketplace.SM.Repo.SkillsRepo;
+import com.Skill.Marketplace.SM.Entities.UserType;
 import com.Skill.Marketplace.SM.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -27,37 +25,42 @@ public class UserService {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setUserType(dto.getUserType());
 
+        if(dto.getUserType()==null){
+            user.setUserType(UserType.CONSUMER);
+            }
+        else{
+            if(dto.getUserType()==UserType.ADMIN){
+                throw new RuntimeException("Cannot create user with ADMIN role");
+            }
+            user.setUserType(dto.getUserType());
+        }
         return userRepo.save(user);
     }
 
-    public void deleteUserById(Long id){
-        userRepo.deleteById(id);
+    public UserModel getUserProfile(String username){
+        return userRepo.getUserByUsername(username)
+                .orElseThrow(()-> new RuntimeException("User not found"));
     }
 
-    public UserModel updateUser(Long id , UpdateUserDTO request){
-         UserModel user = userRepo.findById(id)
+    public UserModel updateUser(String username , UpdateUserDTO request){
+        UserModel user = userRepo.getUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setUserType(request.getUserType());
+
+        if(request.getUserType()==UserType.ADMIN){
+            throw new RuntimeException("Cannot update user to ADMIN role");
+        }
+        else{
+            user.setUserType(request.getUserType());
+        }
 
         return userRepo.save(user);
     }
 
-    public UserModel getUserById(Long id){
-        return userRepo.findById(id)
-                .orElseThrow(()-> new RuntimeException("User not found"));
-    }
-
-    public List<UserModel> getAllUsers(){
-        return userRepo.findAll();
-    }
-
-    public UserModel getUserByUsername(String username){
-        return userRepo.getUserByUsername(username)
-                .orElseThrow(()-> new RuntimeException("User not found"));
+    public void deleteUser(String username){
+        userRepo.deleteUserByUsername(username);
     }
 }

@@ -32,6 +32,15 @@ public class SkillService {
         return skillsRepo.save(skill);
     }
 
+    public Skill getById(Long id){
+        return skillsRepo.findById(id)
+                .orElseThrow(()->new RuntimeException("No skills found"));
+    }
+
+    public List<Skill> getAll(){
+        return skillsRepo.findAll();
+    }
+
     public Skill update(Long id , UpdateSkillDTO dto){
         Skill skill = skillsRepo.findById(id)
                 .orElseThrow(()-> new RuntimeException("No skills found"));
@@ -45,15 +54,6 @@ public class SkillService {
 
         return skillsRepo.save(skill);
 
-    }
-
-    public Skill getById(Long id){
-        return skillsRepo.findById(id)
-                .orElseThrow(()->new RuntimeException("No skills found"));
-    }
-
-    public List<Skill> getAll(){
-        return skillsRepo.findAll();
     }
 
     public void delete(Long id){

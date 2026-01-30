@@ -21,9 +21,9 @@ public class UserSkillService {
     @Autowired
     private SkillsRepo skillsRepo;
 
-    public Void assignSkills(Long id, AssignSkillDTO dto){
+    public Void assignSkills(String username, AssignSkillDTO dto){
 
-        UserModel user = userRepo.findById(id)
+        UserModel user = userRepo.getUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         for (Long skillId : dto.getSkillIds()) {

@@ -6,8 +6,8 @@ import com.Skill.Marketplace.SM.Entities.Category;
 import com.Skill.Marketplace.SM.Services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
@@ -19,7 +19,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CreateCategoryDTO request){
 
@@ -33,22 +33,9 @@ public class CategoryController {
         );
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id , @RequestBody UpdateCategoryDTO dto){
-
-        categoryService.update(id, dto);
-
-        return ResponseEntity.ok(
-                new CategoryResponseDTO(
-                        id,
-                        dto.getCategoryName()
-                )
-        );
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable Long id){
-            Category category = categoryService.getById(id);
+        Category category = categoryService.getById(id);
         return ResponseEntity.ok(
                 new CategoryResponseDTO(
                         category.getCategoryId(),
@@ -69,6 +56,21 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable Long id , @RequestBody UpdateCategoryDTO dto){
+
+        categoryService.update(id, dto);
+
+        return ResponseEntity.ok(
+                new CategoryResponseDTO(
+                        id,
+                        dto.getCategoryName()
+                )
+        );
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategoryById(@PathVariable Long id){
          categoryService.delete(id);
