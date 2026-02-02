@@ -3,6 +3,7 @@ import com.Skill.Marketplace.SM.DTO.OrderDTO.createOrderDTO;
 import com.Skill.Marketplace.SM.DTO.OrderDTO.orderDetailsDTO;
 import com.Skill.Marketplace.SM.Entities.Order;
 import com.Skill.Marketplace.SM.Services.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('CONSUMER') or hasRole('PROVIDER')")
     @PostMapping("/place")
-    public ResponseEntity<?> placeOrder(@RequestBody createOrderDTO orderDTO) {
+    public ResponseEntity<?> placeOrder(@Valid @RequestBody createOrderDTO orderDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Order order =orderService.placeOrder(username, orderDTO);

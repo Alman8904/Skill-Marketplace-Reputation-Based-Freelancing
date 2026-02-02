@@ -1,4 +1,5 @@
 package com.Skill.Marketplace.SM.DTO.categoryDTO;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class CategoryResponseDTO {
+
     private Long id;
     private String categoryName;
 }

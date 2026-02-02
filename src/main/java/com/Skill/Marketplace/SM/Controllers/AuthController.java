@@ -5,6 +5,7 @@ import com.Skill.Marketplace.SM.DTO.userDTO.ResponseToUser;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Security.JWTUtil;
 import com.Skill.Marketplace.SM.Services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser (@RequestBody CreateUserDTO request){
+    public ResponseEntity<?> createUser (@Valid @RequestBody CreateUserDTO request){
 
         UserModel user = userService.createNewUser(request);
         return ResponseEntity.ok(
@@ -46,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginDTO request) {
+    public String login(@Valid @RequestBody LoginDTO request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

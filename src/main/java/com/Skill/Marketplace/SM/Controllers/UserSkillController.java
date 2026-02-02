@@ -4,6 +4,7 @@ import com.Skill.Marketplace.SM.DTO.UserSkillDTO.updateUserSkillDTO;
 import com.Skill.Marketplace.SM.DTO.UserSkillDTO.AssignSkillDTO;
 import com.Skill.Marketplace.SM.Entities.UserSkill;
 import com.Skill.Marketplace.SM.Services.UserSkillService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class UserSkillController {
 
     @PreAuthorize("hasRole('PROVIDER')")
     @PostMapping("/assign")
-    public ResponseEntity<?> assignSkillToUser( @RequestBody AssignSkillDTO dto){
+    public ResponseEntity<?> assignSkillToUser( @Valid @RequestBody AssignSkillDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         userSkillService.assignSkills(username ,dto);
@@ -39,7 +40,7 @@ public class UserSkillController {
 
     @PreAuthorize("hasRole('PROVIDER')" )
     @PutMapping("/update/{userSkillId}")
-    public ResponseEntity<?> updateUserSkill(@PathVariable Long userSkillId, @RequestBody updateUserSkillDTO dto){
+    public ResponseEntity<?> updateUserSkill(@PathVariable Long userSkillId, @Valid @RequestBody updateUserSkillDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         userSkillService.updateUserSkill(userSkillId, username , dto);

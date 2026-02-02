@@ -4,6 +4,7 @@ import com.Skill.Marketplace.SM.DTO.categoryDTO.CreateCategoryDTO;
 import com.Skill.Marketplace.SM.DTO.categoryDTO.UpdateCategoryDTO;
 import com.Skill.Marketplace.SM.Entities.Category;
 import com.Skill.Marketplace.SM.Services.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +22,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createCategory(@RequestBody CreateCategoryDTO request){
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CreateCategoryDTO request){
 
         Category savedCategory = categoryService.create(request);
 
@@ -58,7 +59,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id , @RequestBody UpdateCategoryDTO dto){
+    public ResponseEntity<?> updateCategory(@PathVariable Long id , @Valid @RequestBody UpdateCategoryDTO dto){
 
         categoryService.update(id, dto);
 

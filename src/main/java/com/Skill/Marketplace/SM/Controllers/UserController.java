@@ -2,6 +2,7 @@ package com.Skill.Marketplace.SM.Controllers;
 import com.Skill.Marketplace.SM.DTO.userDTO.*;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Services.UserService;
+import jakarta.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDTO request) {
+    public ResponseEntity<?> updateUser( @Valid @RequestBody UpdateUserDTO request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserModel updatedUser = userService.updateUser(username, request);

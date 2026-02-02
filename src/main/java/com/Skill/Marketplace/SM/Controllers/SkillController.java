@@ -5,6 +5,7 @@ import com.Skill.Marketplace.SM.DTO.skillDTO.SkillResponseDTO;
 import com.Skill.Marketplace.SM.DTO.skillDTO.UpdateSkillDTO;
 import com.Skill.Marketplace.SM.Entities.Skill;
 import com.Skill.Marketplace.SM.Services.SkillService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createSkill(@RequestBody CreateSkillDTO dto){
+    public ResponseEntity<?> createSkill(@Valid @RequestBody CreateSkillDTO dto){
         Skill savedSkill = skillService.create(dto);
         return ResponseEntity.ok(
                 new SkillResponseDTO(
@@ -67,7 +68,7 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSkill(@PathVariable Long id , @RequestBody UpdateSkillDTO dto){
+    public ResponseEntity<?> updateSkill(@PathVariable Long id , @Valid @RequestBody UpdateSkillDTO dto){
         skillService.update(id, dto);
         return ResponseEntity.ok(
                 new SkillResponseDTO(
