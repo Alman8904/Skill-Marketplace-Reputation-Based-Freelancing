@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class createOrderDTO {
 
-    @NotNull
+    @NotNull(message = "Provider ID is required")
     private Long providerId;
-    @NotNull
+    @NotNull(message = "Skill ID is required")
     private Long skillId;
-    @NotBlank
+    @NotBlank(message = "Description is required")
     @Size(min = 10, max = 500)
     private String description;
 }

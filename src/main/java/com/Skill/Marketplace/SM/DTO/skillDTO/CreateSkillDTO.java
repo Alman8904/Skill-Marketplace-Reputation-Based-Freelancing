@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class CreateSkillDTO {
 
-    @NotBlank
+    @NotBlank(message = "Skill name is required")
     private String skillName;
-    @NotNull
+    @NotNull(message = "Category ID is required")
     private Long categoryId;
 }

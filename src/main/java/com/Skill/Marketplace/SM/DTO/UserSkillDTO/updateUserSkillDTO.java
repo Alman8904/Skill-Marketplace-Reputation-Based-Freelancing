@@ -20,6 +20,6 @@ public class updateUserSkillDTO {
     @Size(min=0 , message = "Experience must be non-negative")
     private int experience;
 
-    @NotNull
+    @NotNull(message = "Service mode is required")
     private ServiceMode serviceMode;
 }

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateCategoryDTO {
-    @NotBlank
+    @NotBlank(message = "Category name is required")
     private String categoryName;
 }

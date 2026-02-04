@@ -8,14 +8,14 @@ import lombok.Data;
 @Data
 public class UpdateUserDTO {
 
-    @NotBlank
+    @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50)
     private String username;
-    @NotBlank
+    @NotBlank(message = "Password is required")
     @Size(min=8)
     private String password;
     private String firstName;
     private String lastName;
-    @NotNull
+    @NotNull(message = "User type is required")
     private UserType userType;
 }

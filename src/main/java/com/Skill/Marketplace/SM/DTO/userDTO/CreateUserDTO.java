@@ -8,15 +8,15 @@ import lombok.Data;
 @Data
 public class CreateUserDTO {
 
-    @NotBlank
+    @NotBlank(message = "Username is mandatory")
     @Size(min=3, max=20)
     private String username;
     private String firstName;
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Password is mandatory")
     @Size(min=8)
     private String password;
-    @NotNull
+    @NotNull(message = "User type is mandatory")
     private UserType userType;
 }
