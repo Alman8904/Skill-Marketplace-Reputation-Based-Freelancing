@@ -4,12 +4,15 @@ import com.Skill.Marketplace.SM.DTO.userDTO.UpdateUserDTO;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Entities.UserType;
 import com.Skill.Marketplace.SM.Exception.BadRequestException;
+import com.Skill.Marketplace.SM.Exception.ForbiddenException;
 import com.Skill.Marketplace.SM.Exception.ResourceNotFoundException;
 import com.Skill.Marketplace.SM.Repo.UserRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -21,11 +24,15 @@ public class UserService {
 
     public UserModel createNewUser(CreateUserDTO dto){
 
+        log.info("Creating new user with username: {}", dto.getUsername());
+
         if(dto.getUsername()==null || dto.getUsername().isEmpty()){
+            log.warn("User creation failed because username is missing");
             throw new BadRequestException("Username is required");
         }
 
         if(dto.getPassword()==null || dto.getPassword().isEmpty()){
+            log.warn("User creation failed because password is missing");
             throw new BadRequestException("Password is required");
         }
 
@@ -41,11 +48,16 @@ public class UserService {
             }
         else{
             if(dto.getUserType()==UserType.ADMIN){
-                throw new RuntimeException("Cannot create user with ADMIN role");
+                throw new ForbiddenException("Cannot create user with ADMIN role");
             }
             user.setUserType(dto.getUserType());
         }
-        return userRepo.save(user);
+
+        UserModel saved= userRepo.save(user);
+        log.info("User created successfully : id={}, username: {}",saved.getId(), dto.getUsername());
+
+        return saved;
+
     }
 
     public UserModel getUserProfile(String username){
