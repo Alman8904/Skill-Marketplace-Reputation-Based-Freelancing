@@ -1,6 +1,7 @@
 package com.Skill.Marketplace.SM.Services;
 
 import com.Skill.Marketplace.SM.DTO.OrderDTO.CreateOrderDTO;
+import com.Skill.Marketplace.SM.DTO.OrderDTO.DeliverWorkDTO;
 import com.Skill.Marketplace.SM.Entities.*;
 import com.Skill.Marketplace.SM.Exception.BadRequestException;
 import com.Skill.Marketplace.SM.Exception.ConflictException;
@@ -91,17 +92,19 @@ public class OrderService {
     }
 
     @Transactional
-    public void deliverOrder(Long orderId, String username) {
+    public void deliverOrder(Long orderId, String username, DeliverWorkDTO dto) {
         Order order = orderRepo.findById(orderId).orElseThrow();
 
         if (!order.getProvider().getUsername().equals(username))
             throw new ForbiddenException("Not authorized");
 
-        if (order.getStatus() != OrderStatus.ACCEPTED)
+        if (order.getStatus() != OrderStatus.IN_PROGRESS)
             throw new ConflictException("Order must be accepted first");
 
         order.setStatus(OrderStatus.DELIVERED);
-        order.setCompletedAt(LocalDateTime.now());
+        order.setDeliveredAt(LocalDateTime.now());
+        order.setDeliveryUrl(dto.getDeliveryUrl());
+        order.setDeliveryNotes(dto.getDeliveryNotes());
         orderRepo.save(order);
 
     }
@@ -140,22 +143,6 @@ public class OrderService {
         orderRepo.save(order);
     }
 
-    @Transactional
-    public void deliverWork(Long orderId, String username, String deliveryNote, String deliveryUrl) {
-        Order order = orderRepo.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        if (!order.getProvider().getUsername().equals(username))
-            throw new ForbiddenException("Not authorized");
-
-        if (order.getStatus() != OrderStatus.IN_PROGRESS && order.getStatus() != OrderStatus.ACCEPTED)
-            throw new ConflictException("Cannot deliver work now");
-
-        order.setDeliveryNotes(deliveryNote);
-        order.setDeliveryUrl(deliveryUrl);
-        order.setStatus(OrderStatus.DELIVERED);
-        orderRepo.save(order);
-    }
 
     @Transactional
     public void approveDelivery(Long orderId, String username) {

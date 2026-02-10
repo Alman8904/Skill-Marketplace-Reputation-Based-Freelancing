@@ -17,4 +17,7 @@ public class OrderDetailsDTO {
     private String status;
     private String createdAt;
     private String completedAt;
+    private String deliveryNotes;
+    private String deliveryUrl;
+    private String deliveredAt;
 }

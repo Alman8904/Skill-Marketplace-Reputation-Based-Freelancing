@@ -48,7 +48,10 @@ public class OrderController {
                         order.getAgreedPrice(),
                         order.getStatus().name(),
                         order.getCreatedAt().toString(),
-                        order.getCompletedAt() != null ? order.getCompletedAt().toString() : null
+                        order.getCompletedAt() != null ? order.getCompletedAt().toString() : null,
+                        order.getDeliveryNotes(),
+                        order.getDeliveryUrl(),
+                        order.getDeliveredAt() != null ? order.getDeliveredAt().toString() : null
                 )
         );
     }
@@ -80,16 +83,6 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('PROVIDER')")
-    @PostMapping("/deliver")
-    public ResponseEntity<?> deliverOrder(@RequestParam Long orderId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        orderService.deliverOrder(orderId, username);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @PreAuthorize("hasRole('PROVIDER')")
     @PostMapping("/start-work")
     public ResponseEntity<?> startWork(@RequestParam Long orderId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -108,11 +101,10 @@ public class OrderController {
     public ResponseEntity<?> deliverWork(@Valid @RequestBody DeliverWorkDTO deliverDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        orderService.deliverWork(
+        orderService.deliverOrder(
                 deliverDTO.getOrderId(),
                 username,
-                deliverDTO.getDeliveryNotes(),
-                deliverDTO.getDeliveryUrl()
+                deliverDTO
         );
 
         return ResponseEntity.ok(
@@ -167,6 +159,11 @@ public class OrderController {
                                 order.getCreatedAt().toString(),
                                 order.getCompletedAt() != null
                                         ? order.getCompletedAt().toString()
+                                        : null,
+                                order.getDeliveryNotes(),
+                                order.getDeliveryUrl(),
+                                order.getDeliveredAt() != null
+                                        ? order.getDeliveredAt().toString()
                                         : null
                         ))
                         .toList()
@@ -194,6 +191,11 @@ public class OrderController {
                                 order.getCreatedAt().toString(),
                                 order.getCompletedAt() != null
                                         ? order.getCompletedAt().toString()
+                                        : null,
+                                order.getDeliveryNotes(),
+                                order.getDeliveryUrl(),
+                                order.getDeliveredAt() != null
+                                        ? order.getDeliveredAt().toString()
                                         : null
                         ))
                         .toList()
