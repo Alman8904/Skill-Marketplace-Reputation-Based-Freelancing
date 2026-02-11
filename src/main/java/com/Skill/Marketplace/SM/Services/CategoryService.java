@@ -8,6 +8,7 @@ import com.Skill.Marketplace.SM.Exception.ResourceNotFoundException;
 import com.Skill.Marketplace.SM.Repo.CategoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class CategoryService {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    @Transactional
     public Category create(CreateCategoryDTO dto) {
 
         if (dto.getCategoryName() == null || dto.getCategoryName().isEmpty()) {
@@ -29,6 +31,7 @@ public class CategoryService {
         return categoryRepo.save(category);
     }
 
+    @Transactional
     public Category update(Long id, UpdateCategoryDTO dto) {
         Category existingCategory = categoryRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -51,6 +54,7 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
+    @Transactional
     public void delete(Long id) {
         categoryRepo.deleteById(id);
 

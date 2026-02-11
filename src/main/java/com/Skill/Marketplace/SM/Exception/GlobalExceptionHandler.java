@@ -46,6 +46,13 @@ public class GlobalExceptionHandler {
                 .body("Server error");
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body("Cannot delete entity because it is referenced by other records.");
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {

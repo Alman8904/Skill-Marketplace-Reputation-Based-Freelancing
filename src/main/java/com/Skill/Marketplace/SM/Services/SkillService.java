@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -23,6 +24,7 @@ public class SkillService {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    @Transactional
     public Skill create(CreateSkillDTO dto) {
 
         if (dto.getSkillName() == null || dto.getSkillName().isEmpty()) {
@@ -49,6 +51,7 @@ public class SkillService {
         return skillsRepo.findAll(pageable);
     }
 
+    @Transactional
     public Skill update(Long id, UpdateSkillDTO dto) {
         Skill skill = skillsRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No skills found"));
@@ -68,6 +71,7 @@ public class SkillService {
 
     }
 
+    @Transactional
     public void delete(Long id) {
 
         if (!skillsRepo.existsById(id)) {

@@ -5,6 +5,7 @@ import com.Skill.Marketplace.SM.DTO.UserDTO.UpdateUserDTO;
 import com.Skill.Marketplace.SM.Entities.UserModel;
 import com.Skill.Marketplace.SM.Entities.UserType;
 import com.Skill.Marketplace.SM.Exception.BadRequestException;
+import com.Skill.Marketplace.SM.Exception.DataIntegrityViolationException;
 import com.Skill.Marketplace.SM.Exception.ForbiddenException;
 import com.Skill.Marketplace.SM.Exception.ResourceNotFoundException;
 import com.Skill.Marketplace.SM.Repo.UserRepo;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -23,6 +25,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserModel createNewUser(CreateUserDTO dto) {
 
         log.info("Creating new user with username: {}", dto.getUsername());
@@ -65,6 +68,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    @Transactional
     public UserModel updateUser(String username, UpdateUserDTO request) {
         UserModel user = userRepo.getUserByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -72,7 +76,7 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 
-        if(request.getPassword()!=null && !request.getPassword().isBlank()) {
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
@@ -85,11 +89,18 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    @Transactional
     public void deleteUser(String username) {
 
         if (!userRepo.existsByUsername(username)) {
             throw new ResourceNotFoundException("User not found");
         }
-        userRepo.deleteUserByUsername(username);
+        try{
+            userRepo.deleteUserByUsername(username);
+            userRepo.flush();
+        }
+        catch(Exception e){
+            throw new DataIntegrityViolationException("Cannot delete user because it is associated with other entities");
+        }
     }
 }
