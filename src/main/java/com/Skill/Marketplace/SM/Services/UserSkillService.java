@@ -2,7 +2,9 @@ package com.Skill.Marketplace.SM.Services;
 
 import com.Skill.Marketplace.SM.DTO.UserSkillDTO.AssignSkillDTO;
 import com.Skill.Marketplace.SM.DTO.UserSkillDTO.UpdateUserSkillDTO;
+import com.Skill.Marketplace.SM.DTO.UserSkillDTO.UserSkillResponseDTO;
 import com.Skill.Marketplace.SM.Entities.*;
+import com.Skill.Marketplace.SM.Exception.ConflictException;
 import com.Skill.Marketplace.SM.Exception.ForbiddenException;
 import com.Skill.Marketplace.SM.Exception.ResourceNotFoundException;
 import com.Skill.Marketplace.SM.Repo.SkillsRepo;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserSkillService {
@@ -43,6 +46,15 @@ public class UserSkillService {
 
             Skill skill = skillsRepo.findById(skillData.getSkillId())
                     .orElseThrow(() -> new ResourceNotFoundException("Skill not found"));
+
+            Optional<UserSkill> existingSkill = userSkillRepo
+                    .findByUserAndSkillAndIsActiveTrue(user, skill);
+
+            if (existingSkill.isPresent()) {
+                throw new ConflictException(
+                        "User already has an active assignment for skill: " + skill.getSkillName()
+                );
+            }
 
             UserSkill userSkill = new UserSkill();
             userSkill.setUser(user);
@@ -87,13 +99,24 @@ public class UserSkillService {
         userSkillRepo.save(userSkill);
     }
 
-    public List<UserSkill> getSkillsByUser(String username) {
+    public List<UserSkillResponseDTO> getSkillsByUser(String username) {
         UserModel user = userRepo.getUserByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return userSkillRepo.findByUser(user);
-    }
+        return userSkillRepo.findByUser(user)
+                .stream()
+                .filter(us -> us.isActive())
+                .map(us -> new UserSkillResponseDTO(
+                        us.getUserSkillId(),
+                        us.getSkill().getSkillName(),
+                        us.getDescription(),
+                        us.getRate(),
+                        us.getExperience(),
+                        us.getServiceMode()
+                ))
+                .toList();
 
+    }
 
     public Page<UserSkill> searchProvidersBySkill(
             String skill,
