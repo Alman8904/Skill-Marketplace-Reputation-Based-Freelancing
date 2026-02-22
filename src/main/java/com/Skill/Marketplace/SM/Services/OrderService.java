@@ -145,7 +145,7 @@ public class OrderService {
 
 
     @Transactional
-    public void approveDelivery(Long orderId, String username) {
+    public double approveDelivery(Long orderId, String username) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
@@ -159,6 +159,10 @@ public class OrderService {
         order.setStatus(OrderStatus.COMPLETED);
         order.setCompletedAt(LocalDateTime.now());
         orderRepo.save(order);
+
+        mockPaymentService.capturePayment(orderId);
+
+        return order.getAgreedPrice();
     }
 
     public List<Order> getMyOrders(String username) {

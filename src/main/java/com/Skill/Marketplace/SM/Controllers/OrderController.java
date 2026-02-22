@@ -28,8 +28,6 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private OrderRepo orderRepo;
-    @Autowired
-    private MockPaymentService mockPaymentService;
 
     @PreAuthorize("hasRole('CONSUMER') or hasRole('PROVIDER')")
     @PostMapping("/place")
@@ -120,21 +118,13 @@ public class OrderController {
     public ResponseEntity<?> approveDelivery(@RequestParam Long orderId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        orderService.approveDelivery(orderId, username);
-
-        Order order = orderRepo.findById(orderId).orElseThrow();
-
-        try {
-            mockPaymentService.capturePayment(orderId);
-        } catch (Exception e) {
-            System.err.println("Failed to capture payment for order " + e.getMessage());
-        }
+        double amountReleased = orderService.approveDelivery(orderId, username);
 
         return ResponseEntity.ok(
                 Map.of(
                         "message", "Delivery approved for order ",
                         "orderId", orderId,
-                        "amountReleased", order.getAgreedPrice()
+                        "amountReleased", amountReleased
                 )
         );
     }
@@ -160,8 +150,8 @@ public class OrderController {
                                 order.getCompletedAt() != null
                                         ? order.getCompletedAt().toString()
                                         : null,
-                                order.getDeliveryNotes(),
-                                order.getDeliveryUrl(),
+                                "COMPLETED".equals(order.getStatus().name()) ? order.getDeliveryNotes() : null,
+                                "COMPLETED".equals(order.getStatus().name()) ? order.getDeliveryUrl() : null,
                                 order.getDeliveredAt() != null
                                         ? order.getDeliveredAt().toString()
                                         : null
